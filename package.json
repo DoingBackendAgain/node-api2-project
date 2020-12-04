@@ -5,8 +5,9 @@
     "private": true,
     "main": "index.js",
     "scripts": {
-        "server": "node index.js",
-        "watch": "nodemon index.js"
+        "watch": "nodemon index.js",
+        "start": "node index.js"
+        
     },
     "dependencies": {
         "express": "^4.17.1",
