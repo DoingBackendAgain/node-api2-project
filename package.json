@@ -5,13 +5,15 @@
     "private": true,
     "main": "index.js",
     "scripts": {
-        "server": "nodemon index.js"
+        "server": "node index.js",
+        "watch": "nodemon index.js"
     },
     "dependencies": {
+        "express": "^4.17.1",
         "knex": "^0.21.2",
         "sqlite3": "^5.0.0"
     },
     "devDependencies": {
-        "nodemon": "^2.0.4"
+        "nodemon": "^2.0.6"
     }
 }
