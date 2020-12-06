@@ -49,13 +49,13 @@ router.get("/api/posts", (req, res)=> {
 router.get("/api/posts/:id/comments", (req,res)=> {
     db.findPostComments(req.params.id)
         .then((comment)=> {
-            if(comment){
-                res.status(200).json(comment)
-            }
-            else {
+            if(comment.length === 0){
                 res.status(400).json({
                     message: "The post with that ID doesn't exisit"
                 })
+            }
+            else {
+                res.status(200).json(comment)
             }
         })
         .catch((err)=> {
@@ -92,39 +92,72 @@ router.put('/api/posts/:id', (req, res) => {
              })
          })
    });
+
+
+   router.get("/api/posts/:id", (req,res)=> {
+    const id = req.params.id;
+    db.findById(id)
+
+    .then((post)=> {
+       if (post.length === 0) {
+           return res.status(404).json({
+              message: "no post" 
+           })
+       }
+       else {
+          res.status(200).json(post)
+       }
+    })
+    .catch(()=> {
+        console.log(err)
+        return res.status(500).json({
+            message: "OH NO!!! FIRE!!"
+        })
+    })
+})
+
+
+router.delete("/api/posts/:id", (req, res)=> {
+    db.findById(req.params.id)
+        .then((post)=> {
+            if(post) {
+                db.remove(req.params.id)
+                    .then(()=> {
+                        res.status(200).json({
+                            message: "Post Destroyed FOREVER"
+                        })
+                    })
+            }
+            else {
+                res.status(404).json({
+                    message: "The post with this ID ain't there"
+                })
+            }
+        })
+        .catch((err)=> {
+            console.log(err)
+            res.status(500).json({
+                message: "Errrrrooooorrrrr"
+            })
+        })
+})
  
 
  
 //NEED HELP ON THESE
-//getid isn't working properly
 
-router.get("api/posts/:id", (req,res)=> {
-     const id = req.params;
-     db.findById(id)
 
-     .then((post)=> {
-        if (post.length === 0) {
-          res.status(404).json({
-               message: "no post" 
-            })
-        }
-        else {
-           res.status(200).json(post)
-        }
-     })
-     .catch(()=> {
-         console.log(err)
-         return res.status(500).json({
-             message: "OH NO!!! FIRE!!"
-         })
-     })
-})
 
 router.post("/api/posts/:id/comments", (req, res)=> {
 
-    const {id} = req.params;
-    const {text} = req.body;
-    const comment = {...req.body, post_id:id};
+    const id = req.params.id;
+    const text = req.body;
+   // const comment = {...req.body, post_id:id};
+
+    const comment = {
+        text: req.body.text,
+        post_id: id
+    }
 
     if (!text) {
         res.status(400).json({
@@ -134,7 +167,7 @@ router.post("/api/posts/:id/comments", (req, res)=> {
     else {
         db.findById(id)
             .then((post)=> {
-                if(!post.length){
+                if(post.length === 0){
                     res.status(404).json({
                         message: "The post with this ID doesn't exist"
                     });
@@ -160,30 +193,7 @@ router.post("/api/posts/:id/comments", (req, res)=> {
     }
 });
 
-router.delete("api/posts/:id", (req, res)=> {
-    db.findById(req.params.id)
-        .then((post)=> {
-            if(post) {
-                db.remove(req.params.id)
-                    .then(()=> {
-                        res.status(200).json({
-                            message: "Post Destroyed FOREVER"
-                        })
-                    })
-            }
-            else {
-                res.status(404).json({
-                    message: "The post with this ID ain't there"
-                })
-            }
-        })
-        .catch((err)=> {
-            console.log(err)
-            res.status(500).json({
-                message: "Errrrrooooorrrrr"
-            })
-        })
-})
+
 
 
 
