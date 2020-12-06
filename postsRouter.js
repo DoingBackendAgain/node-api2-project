@@ -110,4 +110,23 @@ router.post("/api/posts/:id/comments", (req, res)=> {
 });
 
 
+router.get("/api/posts/:id/comments", (req,res)=> {
+    db.findPostComments(req.params.id)
+        .then((comment)=> {
+            if(comment){
+                res.status(200).json(comment)
+            }
+            else {
+                res.status(400).json({
+                    message: "The post with that ID doesn't exisit"
+                })
+            }
+        })
+        .catch((err)=> {
+            return res.status(500).json({
+                message: "The comment information couldn't be found"
+            })
+        })
+})
+
 module.exports =router
