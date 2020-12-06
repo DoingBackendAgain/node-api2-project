@@ -73,7 +73,7 @@ router.get("/api/posts", (req, res)=> {
 router.post("/api/posts/:id/comments", (req, res)=> {
     const {id} = req.params;
     const {text} = req.body;
-    const comment = {...req.body, post_id:id}
+    const comment = {...req.body, post_id:id};
 
     if (!text) {
         res.status(400).json({
@@ -88,9 +88,26 @@ router.post("/api/posts/:id/comments", (req, res)=> {
                         message: "The post with this ID doesn't exist"
                     });
                 }
+                else {
+                    db.insertComment(comment)
+                        .then((comment)=> {
+                            db.findCommentById(comment.id)
+                                .then(comment => {
+                                    res.status(201).json({comment})
+                                })
+                        })
+                        .catch((err)=> {
+                            res.status(500).json({
+                                message: "OH that didn't work.. sorry"
+                            })
+                        });
+                }
             })
+            .catch((error)=> {
+                res.status(500).json(error)
+            });
     }
-})
+});
 
 
 module.exports =router
